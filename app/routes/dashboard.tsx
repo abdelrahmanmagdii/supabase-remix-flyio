@@ -10,9 +10,10 @@ export const loader = async ({ request }: { request: Request }) => {
         { request, response }
     );
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session }, error } = await supabase.auth.getSession();
 
-    if (!session) {
+    if (error || !session) {
+        console.error("Authentication error:", error);
         return redirect("/login", { headers: response.headers });
     }
 
@@ -24,7 +25,7 @@ export default function Dashboard() {
 
     return (
         <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
-            <h1>Hello World</h1>
+            <h1>Dashboard</h1>
             <p>Welcome, {email}!</p>
         </div>
     );

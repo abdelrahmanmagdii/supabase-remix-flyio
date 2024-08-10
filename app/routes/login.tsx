@@ -2,6 +2,7 @@ import { useState } from "react";
 import { json, redirect } from "@remix-run/node";
 import { useActionData, useSubmit, Form } from "@remix-run/react";
 import { createServerClient } from "@supabase/auth-helpers-remix";
+import LoginScreen from "../components/LoginScreen";
 
 export const action = async ({ request }: { request: Request }) => {
     const response = new Response();
@@ -23,7 +24,6 @@ export const action = async ({ request }: { request: Request }) => {
 
     return redirect("/dashboard", { headers: response.headers });
 };
-
 export default function Login() {
     const actionData = useActionData<typeof action>();
     const submit = useSubmit();
@@ -37,35 +37,14 @@ export default function Login() {
 
     return (
         <div className="login-container">
-            <h1>Welcome</h1>
-            <Form method="post" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <button type="submit">Log In</button>
-            </Form>
-            {actionData?.error && (
-                <p className="error-message">{actionData?.error}</p>
-            )}
+            <LoginScreen
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                onSubmit={handleSubmit}
+                error={actionData?.error}
+            />
         </div>
     );
 }
