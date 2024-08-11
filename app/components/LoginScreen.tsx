@@ -10,6 +10,7 @@ export const action: ActionFunction = async ({ request }) => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    // connect with supabase
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
