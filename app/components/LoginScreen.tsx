@@ -3,14 +3,13 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Button, Label, TextInput, Alert } from 'flowbite-react';
 import { supabase } from '~/supabaseClient';
-import { useState } from 'react'; // Add this import
+import { useState } from 'react';
 
 export const action: ActionFunction = async ({ request }) => {
     const formData = await request.formData();
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    // connect with supabase
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -22,8 +21,31 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Login() {
     const actionData = useActionData<typeof action>();
-    const [email, setEmail] = useState(''); // Add this line
-    const [password, setPassword] = useState(''); // Add this line
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
+    const validateEmail = (email: string) => {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email) {
+            setEmailError('Email is required');
+        } else if (!re.test(email)) {
+            setEmailError('Invalid email format');
+        } else {
+            setEmailError('');
+        }
+    };
+
+    // const validatePassword = (password: string) => {
+    //     if (!password) {
+    //         setPasswordError('Password is required');
+    //     } else if (password.length < 6) {
+    //         setPasswordError('Password must be at least 6 characters long');
+    //     } else {
+    //         setPasswordError('');
+    //     }
+    // };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -48,8 +70,13 @@ export default function Login() {
                             placeholder="name@company.com"
                             required
                             className="text-black bg-white"
-                            value={email} // Add this line
-                            onChange={(e) => setEmail(e.target.value)} // Add this line
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                validateEmail(e.target.value);
+                            }}
+                            color={emailError ? "failure" : undefined}
+                            helperText={emailError}
                         />
                     </div>
                     <div>
@@ -62,8 +89,13 @@ export default function Login() {
                             type="password"
                             required
                             className="text-black bg-white"
-                            value={password} // Add this line
-                            onChange={(e) => setPassword(e.target.value)} // Add this line
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                // validatePassword(e.target.value);
+                            }}
+                            color={passwordError ? "failure" : undefined}
+                            helperText={passwordError}
                         />
                     </div>
                     <div className="w-full">
