@@ -3,6 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Button, Label, TextInput, Alert } from 'flowbite-react';
 import { supabase } from '~/supabaseClient';
+import { useState } from 'react'; // Add this import
 
 export const action: ActionFunction = async ({ request }) => {
     const formData = await request.formData();
@@ -17,8 +18,11 @@ export const action: ActionFunction = async ({ request }) => {
 
     return redirect("/dashboard");
 };
+
 export default function Login() {
     const actionData = useActionData<typeof action>();
+    const [email, setEmail] = useState(''); // Add this line
+    const [password, setPassword] = useState(''); // Add this line
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -43,6 +47,8 @@ export default function Login() {
                             placeholder="name@company.com"
                             required
                             className="text-black bg-white"
+                            value={email} // Add this line
+                            onChange={(e) => setEmail(e.target.value)} // Add this line
                         />
                     </div>
                     <div>
@@ -55,6 +61,8 @@ export default function Login() {
                             type="password"
                             required
                             className="text-black bg-white"
+                            value={password} // Add this line
+                            onChange={(e) => setPassword(e.target.value)} // Add this line
                         />
                     </div>
                     <div className="w-full">
