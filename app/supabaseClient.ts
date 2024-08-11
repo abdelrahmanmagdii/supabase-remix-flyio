@@ -1,6 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from "@supabase/auth-helpers-remix";
 
-const supabaseUrl = "https://lsmaidgdcufbngbiutoo.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbWFpZGdkY3VmYm5nYml1dG9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjIyODMzNjQsImV4cCI6MjAzNzg1OTM2NH0.KR5Dqn880JhNAqTiPy1w1qE78gAePccHAyPimaP59WI";
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export function getSupabase(request: Request, response: Response) {
+    return createServerClient(supabaseUrl, supabaseAnonKey, { request, response });
+}

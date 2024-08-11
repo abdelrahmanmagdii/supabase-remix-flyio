@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { json, redirect } from "@remix-run/node";
 import { useActionData, useSubmit, Form } from "@remix-run/react";
-import { createServerClient } from "@supabase/auth-helpers-remix";
 import LoginScreen from "../components/LoginScreen";
+import { getSupabase } from '~/supabaseClient';
 
 export const action = async ({ request }: { request: Request }) => {
     const response = new Response();
-    const supabase = createServerClient(
-        "https://lsmaidgdcufbngbiutoo.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbWFpZGdkY3VmYm5nYml1dG9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjIyODMzNjQsImV4cCI6MjAzNzg1OTM2NH0.KR5Dqn880JhNAqTiPy1w1qE78gAePccHAyPimaP59WI",
-        { request, response }
-    );
+    const supabase = getSupabase(request, response);
 
     const formData = await request.formData();
     const email = formData.get("email") as string;
@@ -24,6 +20,7 @@ export const action = async ({ request }: { request: Request }) => {
 
     return redirect("/dashboard", { headers: response.headers });
 };
+
 export default function Login() {
     const actionData = useActionData<typeof action>();
     const submit = useSubmit();
