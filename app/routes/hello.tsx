@@ -4,7 +4,6 @@ import { useLoaderData } from "@remix-run/react";
 
 export const loader: LoaderFunction = async () => {
     try {
-        // console.log("Attempting to fetch from Supabase function...");
         const response = await fetch(
             "https://lsmaidgdcufbngbiutoo.supabase.co/functions/v1/hello-world",
             {
@@ -13,7 +12,7 @@ export const loader: LoaderFunction = async () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`,
                 },
-                body: JSON.stringify({ name: "Remix" }),
+                body: JSON.stringify({ name: "Mohamed" }),
             }
         );
 
