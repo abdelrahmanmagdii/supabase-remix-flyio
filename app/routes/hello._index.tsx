@@ -12,7 +12,7 @@ export const loader: LoaderFunction = async () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`,
                 },
-                body: JSON.stringify({ name: "Mohamed" }),
+                body: JSON.stringify({ name: "Youssef" }),
             }
         );
 
@@ -33,7 +33,7 @@ export const loader: LoaderFunction = async () => {
     }
 };
 
-export default function Hello() {
+export default function Hello_index() {
     const data = useLoaderData<typeof loader>();
 
     if ('error' in data) {
