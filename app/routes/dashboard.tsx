@@ -8,14 +8,21 @@ export const loader: LoaderFunction = async ({ request }) => {
     const response = new Response();
     const supabase = getSupabase(request, response);
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
     if (!session) {
         return redirect("/login");
     }
 
+    if (sessionError) {
+        console.error('Error fetching session:', sessionError);
+        return json({ error: sessionError.message }, { headers: response.headers });
+    }
+
+    const userInfo = session.user;
+
     return json(
-        { email: session.user.email },
+        { email: userInfo.email, userId: userInfo.id },
         { headers: response.headers }
     );
 };
@@ -24,15 +31,18 @@ export const action: ActionFunction = async ({ request }) => {
     const response = new Response();
     const supabase = getSupabase(request, response);
 
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
 
-    return redirect("/login", {
-        headers: response.headers
-    });
+    if (error) {
+        console.error('Error signing out:', error);
+        return json({ error: error.message }, { headers: response.headers });
+    }
+
+    return redirect("/login", { headers: response.headers });
 };
 
 export default function Dashboard() {
-    const { email } = useLoaderData<typeof loader>();
+    const { email, userId, error } = useLoaderData<typeof loader>();
     const submit = useSubmit();
 
     const handleSignOut = () => {
@@ -43,7 +53,16 @@ export default function Dashboard() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
             <h1 className="text-3xl font-bold mb-6 text-white">Dashboard</h1>
             <div className="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-md">
-                <p className="text-lg mb-6 text-white">Welcome, {email}!</p>
+                {error ? (
+                    <p className="text-red-500 mb-4">{error}</p>
+                ) : (
+                    <>
+                        <p className="text-lg mb-2 text-white">Welcome, {email}!</p>
+                        <p className="text-sm mb-6 text-gray-300">
+                            User ID: {userId || 'Not available'}
+                        </p>
+                    </>
+                )}
                 <Form method="post">
                     <Button
                         onClick={handleSignOut}
