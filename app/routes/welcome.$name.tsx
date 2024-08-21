@@ -9,7 +9,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     return json({ message, name });
 };
 
-export default function Greeting() {
+export default function Welcome() {
     const { message, name } = useLoaderData<typeof loader>();
 
     return (
