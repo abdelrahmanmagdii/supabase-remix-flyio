@@ -1,0 +1,13 @@
+create or replace function get_greeting()
+returns text
+language plpgsql
+as $$
+declare
+  current_date text;
+begin
+  select to_char(now(), 'Month DD, YYYY') into current_date;
+  return 'Hello! Welcome. Today is ' || current_date || '.';
+end;
+$$;
+
+
